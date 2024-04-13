@@ -15,10 +15,10 @@ function App() {
         
 
         {/* Gameboard */}
-        <div class="flex justify-center items-center">
+        <div className="flex justify-center items-center">
         <GameBoard
             level={0}
-            gridSize={4}
+            gridSize={7}
             greenSquares={3}
             handleSquareClick={() => {
               // action to handle square
