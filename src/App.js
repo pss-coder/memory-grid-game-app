@@ -78,7 +78,7 @@ function App() {
 
   // Function to move to the next level
   const incrementLevel = () => {
-    if (level === levels.length - 1) return;
+    if (level > levels.length) return;
     // Reset state for next level
     setDisabledClick(true);
     setClickedSquares([]);
@@ -136,7 +136,6 @@ function App() {
       if (isEqual) {
         // Move to next level if squares are correct
         alert( selectedLevel.level === 10 ?  "You Made it! Wow, you have great memory!" : "Great Job! Moving to next level!" );
-        
         incrementLevel();
       } else {
         // Reset game if squares are incorrect
