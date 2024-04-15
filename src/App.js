@@ -151,27 +151,26 @@ function App() {
   }, [clickedSquares, startGame]);
 
   return (
-    <div className='container mx-auto m-4'>
+    <div className="flex justify-center items-center h-screen">  
+    <div className='container mx-auto'>
       {/* Header */}
       <div className='text-center'>
-        <h1 className='text-xl font-bold '>Can you Memorise positions of green boxes?</h1>
-        <p>Level: {selectedLevel.level}</p>
-        <p>Timer: 00:0{timer}</p>
-        <p>Selected Green Squares: {clickedSquares.length}/{selectedLevel.square}</p>
+        <h1 className='text-xl font-bold '>Can you Memorise Positions of the Green Boxes Quickly?</h1>
+
+        <p className='text-2xl text-gray-800'>Level: {selectedLevel.level}</p>
+
+        <p className='text-md text-gray-600'>Timer:
+          <span id="hours" className="ml-2">0</span>
+        <span id="separator" className={`${startGame && 'animate-blink'}`}>:</span>
+        <span id="minutes" claclassNamess="2">0{timer}</span>
+        </p>
+
+        
+        {/* <p>Selected Green Squares: {clickedSquares.length}/{selectedLevel.square}</p> */}
         {/* Button to start game */}
-        <button 
-          onClick={() => {
-            setStartGame(true) 
-            setHideStartButton(true) } }
-          type="button"
-          className={`${hideStartButton && 'hidden' } text-center rounded bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
-        >
-          Start Game
-        </button>       
       </div>
       {/* Gameboard */}
-      <div className="flex justify-center items-center">
-        <GameBoard
+      <div className="mt-8 flex flex-col justify-between items-center relative">  <GameBoard
           level={level}
           gridSize={selectedLevel.grid}
           greenSquares={displayGreenSquares}
@@ -179,8 +178,21 @@ function App() {
           handleSquareClick={userClickSquare}
           clickedSquares={clickedSquares}
         />
+
+        <button 
+          onClick={() => {
+            setStartGame(true) 
+            setHideStartButton(true) } }
+          type="button"
+          className={`${hideStartButton && 'hidden' } absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+
+        >
+          Start Game
+        </button>       
       </div> 
     </div>
+</div>
+    
   );
 }
 

@@ -14,9 +14,9 @@ const Square = ({ id, isGreen, handleClick, disableClick, isClicked }) => {
       <div>
         <button
         disabled={disableClick}
-        className={`w-20 h-20 border border-gray-300 cursor-pointer
-        ${isGreen ? ' bg-green-500' : ''} 
-        ${isClicked ? ' bg-green-500' : ''} 
+        className={`rounded shadow-md w-20 h-20 border border-gray-400 cursor-pointer hover:shadow-2xl
+        ${isGreen ? ' bg-green-300' : ''} 
+        ${isClicked ? ' bg-green-300' : ''} 
         `  
         }
         onClick={() => {
