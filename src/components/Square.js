@@ -10,14 +10,11 @@ const Square = ({ id, isGreen, handleClick, disableClick, isClicked }) => {
     audio.volume = 0.1
     audio.play()
   }
-
-//${!disableClick ? 'hover:bg-green-100' : '' }
-
     return (
       <div>
         <button
         disabled={disableClick}
-        className={`w-20 h-20 border border-gray-300 cursor-pointer focus:bg-green-500
+        className={`w-20 h-20 border border-gray-300 cursor-pointer
         ${isGreen ? ' bg-green-500' : ''} 
         ${isClicked ? ' bg-green-500' : ''} 
         `  
