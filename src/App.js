@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import GameBoard from './components/GameBoard';
+import game_complete from './assets/game_complete.mp3'
+import level_up from './assets/level_up.ogg'
+import try_again from './assets/try_again.wav'
 
 function App() {
   // Game Levels
@@ -30,6 +33,11 @@ function App() {
 
   const [level, setLevel] = useState(1);
   const [selectedLevel, setSelectedLevel] = useState(levels[level - 1]);
+
+  const [levelComplete, setLevelComplete] = useState(false)
+  const [levelLoss, setlevelLoss] = useState(false)
+
+  const [showAnswer, setShowAnswer] = useState(false)
 
   // Button State
   const [hideStartButton, setHideStartButton] = useState(false)
@@ -76,6 +84,24 @@ function App() {
     }
   };
 
+  function playSound(type) { 
+    if (type === 'level') {
+      console.log("playing level up sound")
+      const audio = new Audio(level_up)
+      audio.volume = 0.5
+      audio.play()
+    } else if (type === 'win') {
+      const audio = new Audio(game_complete)
+      audio.volume = 0.8
+      audio.play()
+    } else if (type === 'lose') {
+      const audio = new Audio(try_again)
+      audio.volume = 0.8
+      audio.play()
+    }
+    
+  }
+
   // Function to move to the next level
   const incrementLevel = () => {
     if (level > levels.length) return;
@@ -87,6 +113,8 @@ function App() {
     // Move to next level
     setLevel(level + 1);
     setSelectedLevel(levels[level]);
+
+    setLevelComplete(false)
   };
 
   // Function to reset the game
@@ -100,6 +128,9 @@ function App() {
     // Reset to the first level
     setLevel(0);
     setSelectedLevel(levels[0]);
+
+    setShowAnswer(false)
+    setlevelLoss(false)
   };
 
   // Effect to generate green squares for the selected level
@@ -130,22 +161,43 @@ function App() {
   // Effect to check if user clicked all required squares
   useEffect(() => {
     if (!startGame) return;
-
+    
     if (clickedSquares.length === selectedLevel.square) {
+      
+
       const isEqual = areArrayEqual(clickedSquares, greenSquares);
       if (isEqual) {
+        //sleep(500);
         // Move to next level if squares are correct
-        alert( selectedLevel.level === 10 ?  "You Made it! Wow, you have great memory!" : "Great Job! Moving to next level!" );
-        incrementLevel();
+        //alert( selectedLevel.level === 10 ?  "You Made it! Wow, you have great memory!" : "Great Job! Moving to next level!" );
+        setDisabledClick(true)
+        setLevelComplete(true)
+
+
+        if (selectedLevel.level === 10) {
+          playSound('win')
+        } else {
+          playSound('level')
+        }
+
       } else {
         // Reset game if squares are incorrect
-        
-        setHideStartButton(false)
-        setStartGame(false)
+        // TODO: show answers
+        playSound('lose')
 
-        resetGame();
+        setDisplayGreenSquare(greenSquares)
+        setShowAnswer(true)
+
+        //TODO: Button to restart game
+        setDisabledClick(true)
+        setlevelLoss(true)
+
+        //setHideStartButton(false)
+        //setStartGame(false)
+
+        //resetGame();
         
-        alert("You Lose, try again!");
+        //alert("You Lose, try again!");
       }
     }
   }, [clickedSquares, startGame]);
@@ -162,7 +214,7 @@ function App() {
         <p className='text-md text-gray-600'>Timer:
           <span id="hours" className="ml-2">0</span>
         <span id="separator" className={`${startGame && 'animate-blink'}`}>:</span>
-        <span id="minutes" claclassNamess="2">0{timer}</span>
+        <span id="minutes" className="2">0{timer}</span>
         </p>
 
         
@@ -177,9 +229,13 @@ function App() {
           disableClick={disableClick}
           handleSquareClick={userClickSquare}
           clickedSquares={clickedSquares}
+          showAnswer = {showAnswer}
         />
 
-        <button 
+
+        {
+          !startGame && 
+          <button 
           onClick={() => {
             setStartGame(true) 
             setHideStartButton(true) } }
@@ -188,7 +244,34 @@ function App() {
 
         >
           Start Game
-        </button>       
+        </button>
+        }
+        
+        {
+          levelComplete &&
+          <button 
+          onClick={() => incrementLevel() }
+          type="button"
+          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+
+        >
+          Next Level
+        </button>  
+        }
+
+        {
+          levelLoss &&
+          <button 
+          onClick={() => resetGame() }
+          type="button"
+          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+
+        >
+          Restart Game
+        </button>  
+        }
+          
+
       </div> 
     </div>
 </div>
