@@ -1,15 +1,9 @@
 import { useEffect, useState } from 'react';
-import click from '../assets/click.wav'
+import { playSound } from '../utils';
 
 // Square component representing each square in the grid
 const Square = ({ id, isGreen, handleClick, disableClick, isClicked, showAnswer }) => {
     
-  // every click play sound
-  function playSound() { 
-    const audio = new Audio(click)
-    audio.volume = 0.1
-    audio.play()
-  }
     return (
       <div>
         <button
@@ -21,8 +15,8 @@ const Square = ({ id, isGreen, handleClick, disableClick, isClicked, showAnswer 
         `  
         }
         onClick={() => {
+          playSound('click')
           handleClick(id)
-          playSound()
         }
         
         }
