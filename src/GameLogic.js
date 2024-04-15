@@ -1,6 +1,3 @@
-import { levels } from "./Levels";
-import { areArrayEqual } from "./utils";
-
 // Function to generate random green squares
 export const generateGreenSquares = (n, min, gridSize) => {
     const max = gridSize * gridSize;
@@ -17,9 +14,5 @@ export const generateGreenSquares = (n, min, gridSize) => {
 
     return generatedGreenSquares
   };
-
-  export const isFinalLevel = (currentLevel) => {
-    return currentLevel === levels.length
-  }
   
   

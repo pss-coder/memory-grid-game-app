@@ -18,8 +18,8 @@ function App() {
   const [disableClick, setDisabledClick] = useState(true);
 
   const [timer, setTimer] = useState(4);
-  const [level, setLevel] = useState(1);
 
+  const [level, setLevel] = useState(1);
   const [selectedLevel, setSelectedLevel] = useState(levels[0]);
 
   const [gameState, setGameState] = useState(null); // "levelComplete" or "levelLoss"
@@ -52,19 +52,14 @@ function App() {
 
   // Function to reset the game
   const resetGame = () => {
-    console.log("resetting game")
-    // Reset state for new game
-
-    // Reset to the first level
+    
+    // Reset state for next level
+    setClickedSquares([]);
+    // Move to next level
     setLevel(1);
     setSelectedLevel(levels[0]);
-    setTimer(4)
     setGameState(null);
-
-    setClickedSquares([]);
-    setGreenSquares([]);
-    setDisplayGreenSquare([]);
-    
+    setTimer(4)
 
   };
 
