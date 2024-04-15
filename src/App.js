@@ -157,7 +157,7 @@ function App() {
      setDisplayGreenSquare([])
  
        // move up level
-     setLevelIndex(1)
+     setLevelIndex(0)
      setSelectedLevel(levels[0])
   }
 
@@ -191,6 +191,9 @@ function App() {
   useEffect(() => {
     // perform a check
     if (clickedSquares.length === selectedLevel.square) {
+
+      
+
       console.log("same length")
       const isEqual = areArrayEqual(clickedSquares, greenSquares)
       if (isEqual) {
@@ -238,6 +241,7 @@ function App() {
             greenSquares={displayGreenSquares}
             disableClick = {disableClick}
             handleSquareClick={userClickSquare}
+            clickedSquares={clickedSquares}
           />
 
         </div> 
