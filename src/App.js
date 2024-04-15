@@ -93,12 +93,12 @@ function App() {
   }, [timer, startGame]);
 
   
-
   // Effect to check if user clicked all required squares
   useEffect(() => {
     if (!startGame) return;
     
-    if (clickedSquares.length === selectedLevel.square && !gameState) {
+    // only if number of clicks matches selected squares required
+    if (clickedSquares.length === selectedLevel.square) {
       setDisabledClick(true) // prevent click
 
       const isEqual = areArrayEqual(clickedSquares, greenSquares);
@@ -114,7 +114,6 @@ function App() {
         }
         
       } 
-      
       else {
         setGameState('levelLoss');
         setDisplayGreenSquare(greenSquares);
@@ -136,6 +135,18 @@ function App() {
               <span id="hours" className="ml-2">0</span>
               <span id="separator" className={`${startGame && 'animate-blink'}`}>:</span>
               <span id="minutes" className="2">0{timer}</span>
+            </p>
+            <p className='text-2xl underline text-gray-800'>
+              {
+
+                gameState === 'gameWin' ? 'Congrats, you won! Want to play again?' :
+                gameState === 'levelComplete' ? 'Great, are you ready for the next level?' :
+                gameState === 'levelLoss' ? 'Good Attempt, willing to go again?' :
+                
+                'memorise away!'
+                
+
+              }
             </p>
           </div>
         </div>
