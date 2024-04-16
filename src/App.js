@@ -57,7 +57,7 @@ function App() {
   return (
     <div className="flex justify-center items-center h-screen">
       
-      <div className='container mx-auto mt-16'>
+      <div className='round-lg shadow container mx-auto mt-16 bg-teal-50 py-4'>
         
         {/* Header */}
         <div className='text-center mt-4'>
@@ -86,7 +86,7 @@ function App() {
         </div>
         
 
-        <div className='mt-4 flex gap-4 flex-col sm:flex-row items-center justify-center'>
+        <div className='mt-4 flex gap-12 flex-col sm:flex-row items-center justify-center'>
                 {/* Gameboard */}
           <div className="flex flex-col justify-between items-center relative">
             <GameBoard
