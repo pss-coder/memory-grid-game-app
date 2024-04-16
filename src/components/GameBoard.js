@@ -2,7 +2,7 @@ import { useState } from "react";
 import Square from "./Square";
 
 // GameBoard component representing the grid of squares
-const GameBoard = ({ level, gridSize, clickedSquares ,greenSquares, disableClick ,handleSquareClick, levelEnded }) => {
+const GameBoard = ({ level, gridSize, clickedSquares ,greenSquares, disableClick ,handleSquareClick, showAnswer }) => {
     const totalSquares = gridSize * gridSize;
 
     // CSS Design Grid
@@ -37,6 +37,7 @@ const GameBoard = ({ level, gridSize, clickedSquares ,greenSquares, disableClick
             isGreen={greenSquares.includes(i)} // how to mark markedSquareIndex, if element in markedSquareIndex array has same value?
             handleClick={handleSquareClick}
             isClicked={clickedSquares.includes(i)} // Pass down whether the square is clicked
+            showAnswer = {showAnswer}
           />
         );
       }

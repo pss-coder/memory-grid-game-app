@@ -1,27 +1,22 @@
 import { useEffect, useState } from 'react';
-import click from '../assets/click.wav'
+import { playSound } from '../utils';
 
 // Square component representing each square in the grid
-const Square = ({ id, isGreen, handleClick, disableClick, isClicked }) => {
+const Square = ({ id, isGreen, handleClick, disableClick, isClicked, showAnswer }) => {
     
-  // every click play sound
-  function playSound() { 
-    const audio = new Audio(click)
-    audio.volume = 0.1
-    audio.play()
-  }
     return (
       <div>
         <button
         disabled={disableClick}
-        className={`w-20 h-20 border border-gray-300 cursor-pointer
-        ${isGreen ? ' bg-green-500' : ''} 
-        ${isClicked ? ' bg-green-500' : ''} 
+        className={`rounded shadow-md w-20 h-20 border border-gray-400 cursor-pointer hover:shadow-2xl
+        ${ (isGreen && !showAnswer) ? ' bg-green-300' : ''} 
+        ${isClicked ? ' bg-green-300' : ''} 
+        ${ (isGreen && showAnswer) ? 'bg-red-300' : ''}
         `  
         }
         onClick={() => {
+          playSound('click')
           handleClick(id)
-          playSound()
         }
         
         }
