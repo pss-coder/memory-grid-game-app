@@ -1,5 +1,5 @@
 import { levels } from "./Levels";
-import { areArrayEqual, playSound } from "./utils";
+import { areArrayEqual, exportCSV, playSound } from "./utils";
 
 export const initialGameState = {
   // Initial States
@@ -10,11 +10,14 @@ export const initialGameState = {
   clickedSquares: [],
   disableClick: true,
 
-  timer: 4,
+  timer: null,
   level: 1,
   selectedLevel: levels[0],
 
   gameState: null, // enum - gameWin, levelComplete, levelLoss  <- TODO: typescript future, tighter safety constraint
+
+  levelTimeStart: null,
+  gameHistory:  JSON.parse(localStorage.getItem('gameHistory')) || []
 }
 
 
@@ -23,7 +26,8 @@ export function gameHandler(state, action) {
 
   switch(type) {
     case 'start': {
-      return {...state, startGame: true}
+      localStorage.setItem('gameHistory', JSON.stringify([]))
+      return {...state, startGame: true, timer: 4, gameHistory: []}
     }
     case 'reset_timer': {
       return {...state, timer: 4}
@@ -51,7 +55,7 @@ export function gameHandler(state, action) {
     case 'square_click': {
 
       const square_pos = action.square_pos
-      console.log(square_pos)
+      //console.log(square_pos)
 
       const prevSquares = state.clickedSquares
       const isAlreadyClicked = prevSquares.includes(square_pos);
@@ -79,7 +83,9 @@ export function gameHandler(state, action) {
     case 'reset': {
       // reset 
       const generatedGreenSquares = generateGreenSquares(state.selectedLevel.square, 0, state.selectedLevel.grid);
-
+      
+      // reset storage
+      localStorage.setItem('gameHistory', JSON.stringify([]))
         return {
           ...state,
           clickedSquares: [],
@@ -88,7 +94,8 @@ export function gameHandler(state, action) {
           level: 1,
           selectedLevel: levels[0],
           gameState: null,
-          timer: 4
+          timer: 4,
+          gameHistory: []
         }
     }
     case 'check_win': {
@@ -130,6 +137,36 @@ export function gameHandler(state, action) {
         }
       
       }
+      // to record time elapsed for each level
+    case 'record_time_level': {
+      //console.log("level recording")
+
+      return {
+        ...state,
+        levelTimeStart: Date.now()
+      }
+    }
+    case 'stop_time_level': {
+      //console.log("level stop")
+      const levelTime = Date.now() - state.levelTimeStart
+      const formattedTime = levelTime / 1000; // Convert to seconds (rounded to 2 decimals)
+
+      const updatedGameHistory = [...state.gameHistory, formattedTime]
+
+      localStorage.setItem('gameHistory', JSON.stringify(updatedGameHistory))
+
+      return {
+        ...state,
+        gameHistory: updatedGameHistory,
+        levelTimeStart: null // reset start Time
+      }
+    }
+    case 'export': {
+      // perform export capability here
+      exportCSV(state.gameHistory)
+
+      return {...state}
+    }
     default: //TODO: default, reset to initial state
       break
     }
