@@ -1,10 +1,130 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import './styles/App.css';
 import GameBoard from './components/GameBoard';
 
 import { levels } from './Levels';
 import { areArrayEqual, playSound } from './utils';
 import { generateGreenSquares} from './GameLogic';
+import { type } from '@testing-library/user-event/dist/type';
+
+function reducer(state, action) {
+  const {type} = action
+
+  switch(type) {
+    case 'start': {
+      return {...state, startGame: true}
+    }
+    case 'reset_timer': {
+      return {...state, timer: 4}
+    }
+    case 'decrement_timer': {
+      return {...state, timer: state.timer - 1}
+    }
+    case 'hide_answer': {
+      return {
+        ...state,
+        displayGreenSquares: [],
+        disableClick: false
+      }
+    }
+    case 'generate_green_square': {
+      // Update state with green squares
+      const generatedGreenSquares = generateGreenSquares(state.selectedLevel.square, 0, state.selectedLevel.grid);
+      return {
+        ...state,
+        greenSquares: generatedGreenSquares,
+        displayGreenSquares: generatedGreenSquares,
+        timer: 4
+      }
+    }
+    case 'square_click': {
+
+      const square_pos = action.square_pos
+      console.log(square_pos)
+
+      const prevSquares = state.clickedSquares
+      const isAlreadyClicked = prevSquares.includes(square_pos);
+
+      return {
+        ...state,
+        clickedSquares: isAlreadyClicked 
+          ? prevSquares.filter(squareIndex => squareIndex !== square_pos)
+          : [...prevSquares, square_pos]
+      }
+    }
+    case 'increment': {
+      if (state.level === levels.length) return;
+      return {
+        ...state,
+        clickedSquares: [],
+        greenSquares: [],
+        displayGreenSquares: [],
+        level: state.level + 1,
+        selectedLevel: levels[state.level],
+        gameState: null
+      }
+
+    }
+    case 'reset': {
+      // reset 
+      const generatedGreenSquares = generateGreenSquares(state.selectedLevel.square, 0, state.selectedLevel.grid);
+
+        return {
+          ...state,
+          clickedSquares: [],
+          greenSquares: generatedGreenSquares,
+          displayGreenSquares: generatedGreenSquares,
+          level: 1,
+          selectedLevel: levels[0],
+          gameState: null,
+          timer: 4
+        }
+    }
+    case 'check_win': {
+      console.log(state)
+      // only if number of clicks matches selected squares required
+      
+        
+        //setDisabledClick(true) // prevent click
+        const disableClick = true
+        var gameState = null
+        var displayAnswer = null
+
+        const isEqual = areArrayEqual(state.clickedSquares, state.greenSquares);
+        
+
+        if (isEqual) {
+          
+          if (state.level === levels.length) {
+            gameState = 'gameWin'
+            playSound('win');
+            
+          } else {
+            gameState = 'levelComplete'
+            playSound('level')
+          }
+          
+        } 
+        else {
+          gameState = 'levelLoss';
+          displayAnswer = state.greenSquares
+          playSound('lose');
+        }
+        
+        return {
+          ...state,
+          disableClick: disableClick,
+          gameState: gameState,
+          displayGreenSquares: displayAnswer != null ? displayAnswer : state.displayGreenSquares
+        }
+      
+      }
+    default:
+      break
+      return state
+    }
+
+  }
 
 function App() {
 
@@ -17,121 +137,110 @@ function App() {
     // save_history
     // clear_history
     // export_game
+    const [state, dispatch] = useReducer(reducer, {
+      startGame: false,
+      greenSquares: [],
+      displayGreenSquares: [],
 
-  // States
-  const [startGame, setStartGame] = useState(false);
+      clickedSquares: [],
+      disableClick: true,
 
-  const [greenSquares, setGreenSquares] = useState([]);
-  const [displayGreenSquares, setDisplayGreenSquare] = useState([]);
+      timer: 4,
+      level: 1,
+      selectedLevel: levels[0],
 
-  const [clickedSquares, setClickedSquares] = useState([]);
-  const [disableClick, setDisabledClick] = useState(true);
+      gameState: null, // enum
+    })
 
-  const [timer, setTimer] = useState(4);
+  // // States
+  // const [startGame, setStartGame] = useState(false);
 
-  const [level, setLevel] = useState(1);
-  const [selectedLevel, setSelectedLevel] = useState(levels[0]);
+  // const [greenSquares, setGreenSquares] = useState([]);
+  // const [displayGreenSquares, setDisplayGreenSquare] = useState([]);
 
-  const [gameState, setGameState] = useState(null); // "levelComplete" or "levelLoss"
+  // const [clickedSquares, setClickedSquares] = useState([]);
+  // const [disableClick, setDisabledClick] = useState(true);
+
+  // const [timer, setTimer] = useState(4);
+
+  // const [level, setLevel] = useState(1);
+  // const [selectedLevel, setSelectedLevel] = useState(levels[0]);
+
+  // const [gameState, setGameState] = useState(null); // "levelComplete" or "levelLoss"
 
   
   // Function to handle user click on a square
   const userClickSquare = index => {
-    setClickedSquares(prevSquares => {
-      const isAlreadyClicked = prevSquares.includes(index);
-      return isAlreadyClicked
-        ? prevSquares.filter(squareIndex => squareIndex !== index)
-        : [...prevSquares, index];
-    });
+    dispatch({type: 'square_click', square_pos: index })
   };
 
-  
+  // // Function to move to the next level
+  // const incrementLevel = () => {
+  //   if (level === levels.length) return;
+  //   // Reset state for next level
+  //   setClickedSquares([]);
+  //   setGreenSquares([]);
+  //   setDisplayGreenSquare([]);
+  //   // Move to next level
+  //   setLevel(level + 1);
+  //   setSelectedLevel(levels[level]);
+  //   setGameState(null);
+  // };
 
-  // Function to move to the next level
-  const incrementLevel = () => {
-    if (level === levels.length) return;
-    // Reset state for next level
-    setClickedSquares([]);
-    setGreenSquares([]);
-    setDisplayGreenSquare([]);
-    // Move to next level
-    setLevel(level + 1);
-    setSelectedLevel(levels[level]);
-    setGameState(null);
-  };
-
-  // Function to reset the game
-  const resetGame = () => {
+  // // Function to reset the game
+  // const resetGame = () => {
     
-    // Reset state for next level
-    setClickedSquares([]);
-    // Move to next level
-    setLevel(1);
-    setSelectedLevel(levels[0]);
-    setGameState(null);
-    setTimer(4)
-
-  };
+  //   // Reset state for next level
+  //   setClickedSquares([]);
+  //   // Move to next level
+  //   setLevel(1);
+  //   setSelectedLevel(levels[0]);
+  //   setGameState(null);
+  //   setTimer(4)
+  // };
 
   // Effect to generate green squares for the selected level
   useEffect(() => {
-    if (!startGame) return;
+    if (!state.startGame) return;
 
     // Update state with green squares
-    const generatedGreenSquares = generateGreenSquares(selectedLevel.square, 0, selectedLevel.grid);
-    setGreenSquares(generatedGreenSquares);
-    setDisplayGreenSquare(generatedGreenSquares);
+    dispatch({type: 'generate_green_square'})
 
-    setTimer(4); // Reset timer
-  }, [selectedLevel, startGame]);
+    dispatch({type: 'reset_timer'})
+
+
+  }, [state.selectedLevel, state.startGame]);
 
   // Effect to manage timer countdown
   useEffect(() => {
-    if (!startGame) return;
+    if (!state.startGame) return;
 
     const countdown = setInterval(() => {
-      if (timer > 0) {
-        setTimer(timer - 1);
+      if (state.timer > 0) {
+        //setTimer(timer - 1);
+        dispatch({type: 'decrement_timer'})
       }
-      if (timer === 1) {
+      if (state.timer === 1) {
         // Hide green squares and enable clicks
-        setDisplayGreenSquare([]);
-        setDisabledClick(false);
+        // hide_answer
+        dispatch({type: 'hide_answer'})
+        
+
       }
     }, 1000);
     return () => clearInterval(countdown);
-  }, [timer, startGame]);
+  }, [state.timer, state.startGame]);
 
   
   // Effect to check if user clicked all required squares
   useEffect(() => {
-    if (!startGame) return;
-    
+    if (!state.startGame) return;
+
     // only if number of clicks matches selected squares required
-    if (clickedSquares.length === selectedLevel.square) {
-      setDisabledClick(true) // prevent click
-
-      const isEqual = areArrayEqual(clickedSquares, greenSquares);
-      if (isEqual) {
-        
-        if (level === levels.length) {
-          setGameState('gameWin');
-          playSound('win');
-          
-        } else {
-          setGameState('levelComplete')
-          playSound('level')
-        }
-        
-      } 
-      else {
-        setGameState('levelLoss');
-        setDisplayGreenSquare(greenSquares);
-        playSound('lose');
-      }
+    if (state.clickedSquares.length === state.selectedLevel.square) {
+      dispatch({type: 'check_win'})
     }
-
-  }, [clickedSquares, gameState]);
+  }, [state.clickedSquares, state.gameState]);
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -148,18 +257,18 @@ function App() {
         <div className='flex flex-col justify-center items-center gap-2 text-center'>
         <p className='text-md font-semibold underline text-gray-800'>
               {
-                gameState === 'gameWin' ? 'Congrats, you won! Want to play again?' :
-                gameState === 'levelComplete' ? 'Great, are you ready for the next level?' :
-                gameState === 'levelLoss' ? 'Good Attempt, willing to go again?' :
+                state.gameState === 'gameWin' ? 'Congrats, you won! Want to play again?' :
+                state.gameState === 'levelComplete' ? 'Great, are you ready for the next level?' :
+                state.gameState === 'levelLoss' ? 'Good Attempt, willing to go again?' :
                 'Let the Hunt Begin!'
               }
             </p>
           <div className='flex flex-row gap-2'>
-          <p>Level: <span className='font-bold'>{selectedLevel.level}</span> </p>
+          <p>Level: <span className='font-bold'>{state.selectedLevel.level}</span> </p>
             <p className='text-md text-gray-600'>Timer:
               <span id="hours" className="ml-1">00</span>
-              <span id="separator" className={`${startGame && 'animate-blink'}`}>:</span>
-              <span id="minutes" className="font-bold">0{timer}</span>
+              <span id="separator" className={`${state.startGame && 'animate-blink'}`}>:</span>
+              <span id="minutes" className="font-bold">0{state.timer}</span>
             </p>
           </div>
         </div>
@@ -168,22 +277,23 @@ function App() {
                 {/* Gameboard */}
           <div className="flex flex-col justify-between items-center relative">
             <GameBoard
-              level={level}
-              gridSize={selectedLevel.grid}
-              greenSquares={displayGreenSquares}
-              disableClick={disableClick}
+              level={state.level}
+              gridSize={state.selectedLevel.grid}
+              greenSquares={state.displayGreenSquares}
+              disableClick={state.disableClick}
               handleSquareClick={userClickSquare}
-              clickedSquares={clickedSquares}
-              showAnswer={gameState === 'levelLoss'} // show answer only when level loss
+              clickedSquares={state.clickedSquares}
+              showAnswer={state.gameState === 'levelLoss'} // show answer only when level loss
             />
           </div>
 
           {/* Button */}
           {
-            !startGame &&
+            !state.startGame &&
             <button
               onClick={() => {
-                setStartGame(true);
+                //setStartGame(true);
+                dispatch({type: 'start'})
               }}
               type="button"
               className={` absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
@@ -192,15 +302,15 @@ function App() {
             </button>
           }
           {
-            gameState && (
+            state.gameState && (
               <button
                 onClick={() => {
-                  gameState === 'levelComplete' ? incrementLevel() : resetGame();
+                  state.gameState === 'levelComplete' ? dispatch({type: 'increment'}) : dispatch({type: 'reset'});
                 }}
                 type="button"
                 className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
               >
-                {gameState === 'levelComplete' ? 'Next Level' : 'Restart Game'}
+                {state.gameState === 'levelComplete' ? 'Next Level' : 'Restart Game'}
               </button>
             )}
 
