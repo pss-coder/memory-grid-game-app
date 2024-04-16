@@ -8,6 +8,16 @@ import { generateGreenSquares} from './GameLogic';
 
 function App() {
 
+  //TODO: Consider using reducer?
+    // start_game
+    // generate_green_squares
+    // square_click
+    // check_win
+    // increment_level
+    // save_history
+    // clear_history
+    // export_game
+
   // States
   const [startGame, setStartGame] = useState(false);
 
@@ -125,68 +135,104 @@ function App() {
 
   return (
     <div className="flex justify-center items-center h-screen">
+      
       <div className='container mx-auto'>
+        
         {/* Header */}
         <div className='text-center'>
-          <h1 className='text-xl font-bold '>Can you Memorise Positions of the Green Boxes Quickly?</h1>
-          <div className='game-info'>
-            <p className='text-2xl text-gray-800'>Level: {selectedLevel.level}</p>
-            <p className='text-md text-gray-600'>Timer:
-              <span id="hours" className="ml-2">0</span>
-              <span id="separator" className={`${startGame && 'animate-blink'}`}>:</span>
-              <span id="minutes" className="2">0{timer}</span>
-            </p>
-            <p className='text-2xl underline text-gray-800'>
-              {
+        <h1 className='text-3xl font-bold'>Squarehunt</h1>
+          <p className='text-gray-400'>Can you hunt the green squares quickly?</p>
+        </div>
 
+        {/* Game Info */}
+        <div className='flex flex-col justify-center items-center gap-2 text-center'>
+        <p className='text-md font-semibold underline text-gray-800'>
+              {
                 gameState === 'gameWin' ? 'Congrats, you won! Want to play again?' :
                 gameState === 'levelComplete' ? 'Great, are you ready for the next level?' :
                 gameState === 'levelLoss' ? 'Good Attempt, willing to go again?' :
-                
-                'memorise away!'
-                
-
+                'Let the Hunt Begin!'
               }
+            </p>
+          <div className='flex flex-row gap-2'>
+          <p>Level: <span className='font-bold'>{selectedLevel.level}</span> </p>
+            <p className='text-md text-gray-600'>Timer:
+              <span id="hours" className="ml-1">00</span>
+              <span id="separator" className={`${startGame && 'animate-blink'}`}>:</span>
+              <span id="minutes" className="font-bold">0{timer}</span>
             </p>
           </div>
         </div>
-        {/* Gameboard */}
-        <div className="mt-8 flex flex-col justify-between items-center relative">
-          <GameBoard
-            level={level}
-            gridSize={selectedLevel.grid}
-            greenSquares={displayGreenSquares}
-            disableClick={disableClick}
-            handleSquareClick={userClickSquare}
-            clickedSquares={clickedSquares}
-            showAnswer={gameState === 'levelLoss'} // show answer only when level loss
-          />
-        </div>
-        {/* Button */}
-        {
-          !startGame &&
-          <button
-            onClick={() => {
-              setStartGame(true);
-            }}
-            type="button"
-            className={` absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
-          >
-            Start Game
-          </button>
-        }
-        {
-          gameState && (
+
+        <div className='mt-4 flex gap-4 flex-col sm:flex-row items-center justify-center'>
+                {/* Gameboard */}
+          <div className="flex flex-col justify-between items-center relative">
+            <GameBoard
+              level={level}
+              gridSize={selectedLevel.grid}
+              greenSquares={displayGreenSquares}
+              disableClick={disableClick}
+              handleSquareClick={userClickSquare}
+              clickedSquares={clickedSquares}
+              showAnswer={gameState === 'levelLoss'} // show answer only when level loss
+            />
+          </div>
+
+          {/* Button */}
+          {
+            !startGame &&
             <button
               onClick={() => {
-                gameState === 'levelComplete' ? incrementLevel() : resetGame();
+                setStartGame(true);
               }}
               type="button"
-              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+              className={` absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
             >
-              {gameState === 'levelComplete' ? 'Next Level' : 'Restart Game'}
+              Start Game
             </button>
-          )}
+          }
+          {
+            gameState && (
+              <button
+                onClick={() => {
+                  gameState === 'levelComplete' ? incrementLevel() : resetGame();
+                }}
+                type="button"
+                className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+              >
+                {gameState === 'levelComplete' ? 'Next Level' : 'Restart Game'}
+              </button>
+            )}
+
+            <div className="rounded-lg bg-yellow-200">
+      <div className="flex flex-row gap-2 mb-2">
+        <h3 className="font-bold">Game History</h3>
+        <button className="button bg-slate-100 button-primary">Export</button>
+      </div>
+
+      {/* ScorePanel */}
+      <div className="w-64 h-64 overflow-y-scroll shadow scroll-smooth">
+          <ul className="list-none">
+          <li>Level 1: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 2: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 3: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 4: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 5: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 6: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 7: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 8: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 9: Time Taken - <span id="level-1-time">02:40s</span></li>
+          <li>Level 10: Time Taken - <span id="level-1-time">02:40s</span></li>
+        </ul>
+      </div>
+        
+        
+  </div>
+
+
+        </div>
+
+       
       </div>
     </div>
   );
