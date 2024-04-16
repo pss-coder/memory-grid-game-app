@@ -26,7 +26,8 @@ export function gameHandler(state, action) {
 
   switch(type) {
     case 'start': {
-      return {...state, startGame: true, timer: 4}
+      localStorage.setItem('gameHistory', JSON.stringify([]))
+      return {...state, startGame: true, timer: 4, gameHistory: []}
     }
     case 'reset_timer': {
       return {...state, timer: 4}
@@ -82,7 +83,9 @@ export function gameHandler(state, action) {
     case 'reset': {
       // reset 
       const generatedGreenSquares = generateGreenSquares(state.selectedLevel.square, 0, state.selectedLevel.grid);
-
+      
+      // reset storage
+      localStorage.setItem('gameHistory', JSON.stringify([]))
         return {
           ...state,
           clickedSquares: [],

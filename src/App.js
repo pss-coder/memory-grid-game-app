@@ -126,7 +126,7 @@ function App() {
               </button>
             )}
 
-            <div className="rounded-lg bg-yellow-200">
+            <div className="rounded-lg bg-yellow-200 p-2 shadow">
                 {/* Panel Header */}
                 <div className="flex flex-row gap-2 mb-2 mt-2 justify-center">
                   <h3 className="font-bold">Game History</h3>
@@ -140,7 +140,7 @@ function App() {
                 </div>
 
                 {/* Time-Taken Panel */}
-                <div className="w-64 h-64 overflow-y-scroll shadow scroll-smooth">
+                <div className="w-64 h-64 overflow-y-scroll  scroll-smooth">
                     <ul className="list-none">
                     {state.gameHistory.map( (elapsedTime, index) => { return (
                       <li key={index}> Level {index + 1}: {elapsedTime} seconds</li>  
