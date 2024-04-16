@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Square from "./Square";
 
 // GameBoard component representing the grid of squares
