@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { playSound } from '../utils';
 
 // Square component representing each square in the grid
