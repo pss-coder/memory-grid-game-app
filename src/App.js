@@ -7,8 +7,12 @@ import './styles/App.css';
 function App() {
     const [state, dispatch] = useReducer(gameHandler, initialGameState )
 
+
   // Function to handle user click on a square
   const userClickSquare = index => { dispatch({type: 'square_click', square_pos: index })};
+
+  const onLevelIncrement = () => { ; dispatch({type: 'increment'})}
+  const onGameReset = () => { dispatch({type: 'reset'})}
 
   // Effect to generate green squares for the selected level
   useEffect(() => {
@@ -27,10 +31,13 @@ function App() {
 
     const countdown = setInterval(() => {
       if (state.timer > 0) { dispatch({type: 'decrement_timer'}) }
-      if (state.timer === 1) { dispatch({type: 'hide_answer'}) }
+      if (state.timer === 1) { 
+        dispatch({type: 'hide_answer'}) 
+        dispatch({type:'record_time_level'}) // start recording time, once time for user turn to play
+      }
     }, 1000);
     return () => clearInterval(countdown);
-  }, [state.timer, state.startGame]);
+  }, [state.timer]);
 
   
   // Effect to check if user clicked all required squares
@@ -40,8 +47,12 @@ function App() {
     // only if number of clicks matches selected squares required
     if (state.clickedSquares.length === state.selectedLevel.square) {
       dispatch({type: 'check_win'})
+
+      dispatch({type:'stop_time_level'})
     }
-  }, [state.clickedSquares, state.gameState]);
+  }, [state.clickedSquares]);
+  // [state.clickedSquares, state.gameState]
+  
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -93,7 +104,9 @@ function App() {
           {
             !state.startGame &&
             <button
-              onClick={() => { dispatch({type: 'start'}) }}
+              onClick={() => { 
+                dispatch({type: 'start'})
+                 }}
               type="button"
               className={` absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
             >
@@ -103,9 +116,9 @@ function App() {
           {
             state.gameState && (
               <button
-                onClick={() => { state.gameState === 'levelComplete' ? 
-                dispatch({type: 'increment'}) 
-                : dispatch({type: 'reset'}); }}
+                onClick={() => { state.gameState === 'levelComplete' ? onLevelIncrement()
+                : onGameReset()
+                }}
                 type="button"
                 className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
               >
@@ -115,24 +128,23 @@ function App() {
 
             <div className="rounded-lg bg-yellow-200">
                 {/* Panel Header */}
-                <div className="flex flex-row gap-2 mb-2">
+                <div className="flex flex-row gap-2 mb-2 mt-2 justify-center">
                   <h3 className="font-bold">Game History</h3>
-                  <button className="button bg-slate-100 button-primary">Export</button>
+                  <button className="
+                  rounded-lg bg-indigo-600 px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  onClick={() => {
+                    dispatch({type: 'export'})
+                  }}
+                  >
+                  Export</button>
                 </div>
 
                 {/* Time-Taken Panel */}
                 <div className="w-64 h-64 overflow-y-scroll shadow scroll-smooth">
                     <ul className="list-none">
-                    <li>Level 1: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 2: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 3: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 4: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 5: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 6: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 7: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 8: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 9: Time Taken - <span id="level-1-time">02:40s</span></li>
-                    <li>Level 10: Time Taken - <span id="level-1-time">02:40s</span></li>
+                    {state.gameHistory.map( (elapsedTime, index) => { return (
+                      <li key={index}> Level {index + 1}: {elapsedTime} seconds</li>  
+                    )})}
                   </ul>
                 </div>
             </div>

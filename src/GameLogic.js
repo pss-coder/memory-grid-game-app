@@ -1,5 +1,5 @@
 import { levels } from "./Levels";
-import { areArrayEqual, playSound } from "./utils";
+import { areArrayEqual, exportCSV, playSound } from "./utils";
 
 export const initialGameState = {
   // Initial States
@@ -10,11 +10,14 @@ export const initialGameState = {
   clickedSquares: [],
   disableClick: true,
 
-  timer: 4,
+  timer: null,
   level: 1,
   selectedLevel: levels[0],
 
   gameState: null, // enum - gameWin, levelComplete, levelLoss  <- TODO: typescript future, tighter safety constraint
+
+  levelTimeStart: null,
+  gameHistory: []
 }
 
 
@@ -23,7 +26,7 @@ export function gameHandler(state, action) {
 
   switch(type) {
     case 'start': {
-      return {...state, startGame: true}
+      return {...state, startGame: true, timer: 4}
     }
     case 'reset_timer': {
       return {...state, timer: 4}
@@ -51,7 +54,7 @@ export function gameHandler(state, action) {
     case 'square_click': {
 
       const square_pos = action.square_pos
-      console.log(square_pos)
+      //console.log(square_pos)
 
       const prevSquares = state.clickedSquares
       const isAlreadyClicked = prevSquares.includes(square_pos);
@@ -88,7 +91,8 @@ export function gameHandler(state, action) {
           level: 1,
           selectedLevel: levels[0],
           gameState: null,
-          timer: 4
+          timer: 4,
+          gameHistory: []
         }
     }
     case 'check_win': {
@@ -130,6 +134,32 @@ export function gameHandler(state, action) {
         }
       
       }
+      // to record time elapsed for each level
+    case 'record_time_level': {
+      //console.log("level recording")
+
+      return {
+        ...state,
+        levelTimeStart: Date.now()
+      }
+    }
+    case 'stop_time_level': {
+      //console.log("level stop")
+      const levelTime = Date.now() - state.levelTimeStart
+      const formattedTime = levelTime / 1000; // Convert to seconds (rounded to 2 decimals)
+
+      return {
+        ...state,
+        gameHistory: [...state.gameHistory, formattedTime],
+        levelTimeStart: null // reset start Time
+      }
+    }
+    case 'export': {
+      // perform export capability here
+      exportCSV(state.gameHistory)
+
+      return {...state}
+    }
     default: //TODO: default, reset to initial state
       break
     }

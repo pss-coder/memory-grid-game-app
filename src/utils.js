@@ -34,3 +34,30 @@ export const playSound = (type) => {
     // Check if every element in the arrays is equal
     return arr1.every((value, index) => value === arr2[index]);
   };
+
+
+export const exportCSV = (data, filename = 'game_history.csv') => {
+    // Add header row with labels
+    const csvContent = [
+      ['Levels', 'ElapsedTime'], // Header row
+      ...data.map((elapsedTime, index) => [index + 1, elapsedTime]), // Data rows (index + 1 for level number)
+    ].map(row => {
+      // Handle potential commas or quotes within data fields
+      return row.map(field => (typeof field === 'string' ? `"${field.replace(/"/g, '""')}"`: field)).join(',');
+    }).join('\n');
+  
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+
+    const URL = window.URL || window.webkitURL;
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement('a');
+    document.body.appendChild(link);
+    link.href = url;
+    link.download = filename;
+    link.click();
+    // remove link from document here
+    document.body.removeChild(link)
+  
+    URL.revokeObjectURL(url);
+  };
