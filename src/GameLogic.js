@@ -17,7 +17,7 @@ export const initialGameState = {
   gameState: null, // enum - gameWin, levelComplete, levelLoss  <- TODO: typescript future, tighter safety constraint
 
   levelTimeStart: null,
-  gameHistory: []
+  gameHistory:  JSON.parse(localStorage.getItem('gameHistory')) || []
 }
 
 
@@ -148,9 +148,13 @@ export function gameHandler(state, action) {
       const levelTime = Date.now() - state.levelTimeStart
       const formattedTime = levelTime / 1000; // Convert to seconds (rounded to 2 decimals)
 
+      const updatedGameHistory = [...state.gameHistory, formattedTime]
+
+      localStorage.setItem('gameHistory', JSON.stringify(updatedGameHistory))
+
       return {
         ...state,
-        gameHistory: [...state.gameHistory, formattedTime],
+        gameHistory: updatedGameHistory,
         levelTimeStart: null // reset start Time
       }
     }
