@@ -71,27 +71,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 
 -------
-- Implement Logic
-- Clean up UI <- make it more nicer layout
-    -- instead of pop-up aleart, overlay message ontop
-    -- Display time elapsed for each round
-        -- Allow user to export time elapsed for each out
 
-- Clean up code <- improve efficency
-- Test, test, test
-- Create unit test cases?
-- Deploy vercel
+2. Improve UI <- test for all grid size, and mobile size
+3. Unit test cases
+5. Update readme.md
+4. Demo Video <-
 
-
-
---- Future Implementation 
--- Play with Friend?? <- can I implement it now? 
-        -- send id to join channel
-        -- able to update UI Respectively
-        -- if so, need to update UI for friend mode??
-
-
--- Compare past results and see improvement or worse?
-
-Aim for completion: Wednesday Night <- have everything done, exluding play with friend
-Aim for abit more: Play with friend, unit test?
+https://freesound.org/

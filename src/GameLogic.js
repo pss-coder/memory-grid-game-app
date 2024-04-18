@@ -17,7 +17,8 @@ export const initialGameState = {
   gameState: null, // enum - gameWin, levelComplete, levelLoss  <- TODO: typescript future, tighter safety constraint
 
   levelTimeStart: null,
-  gameHistory:  JSON.parse(localStorage.getItem('gameHistory')) || []
+  gameHistory:  JSON.parse(localStorage.getItem('gameHistory')) || [],
+  highestScore: JSON.parse(localStorage.getItem('highestScore')) || 0
 }
 
 
@@ -101,16 +102,18 @@ export function gameHandler(state, action) {
     case 'check_win': {
       console.log(state)
       // only if number of clicks matches selected squares required
-      
+      //highestScore
+      // if state.level > state.highestScore: update highestScore
+      //localStorage.setItem('highestScore', JSON.stringify([]))
         
         //setDisabledClick(true) // prevent click
         const disableClick = true
         var gameState = null
         var displayAnswer = null
 
-        const isEqual = areArrayEqual(state.clickedSquares, state.greenSquares);
-        
+        var newHighestScore = state.highestScore
 
+        const isEqual = areArrayEqual(state.clickedSquares, state.greenSquares);
         if (isEqual) {
           
           if (state.level === levels.length) {
@@ -120,6 +123,13 @@ export function gameHandler(state, action) {
           } else {
             gameState = 'levelComplete'
             playSound('level')
+          }
+
+          // update highest score
+          if (state.level > state.highestScore) {
+            
+            newHighestScore = state.level
+            localStorage.setItem('highestScore', JSON.stringify(state.level))
           }
           
         } 
@@ -133,7 +143,8 @@ export function gameHandler(state, action) {
           ...state,
           disableClick: disableClick,
           gameState: gameState,
-          displayGreenSquares: displayAnswer != null ? displayAnswer : state.displayGreenSquares
+          displayGreenSquares: displayAnswer != null ? displayAnswer : state.displayGreenSquares,
+          highestScore: newHighestScore
         }
       
       }
