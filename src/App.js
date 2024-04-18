@@ -63,6 +63,7 @@ function App() {
         <div className='text-center mt-4'>
         <h1 className='text-3xl font-bold'>Squarehunt</h1>
           <p className='text-gray-400'>Can you hunt the green squares quickly?</p>
+          <p>Highest Score Level: {state.highestScore}</p>
         </div>
 
         {/* Game Info */}
