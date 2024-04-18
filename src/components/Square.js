@@ -21,7 +21,7 @@ const Square = ({ id, isGreen, handleClick, disableClick, isClicked, showAnswer,
   }
     
   return (
-      <div>
+      <div data-testid={`square-${id}`}>
         <button
         disabled={disableClick}
         className={`rounded shadow-md ${updateWidthHeightBy(gridSize)} border border-gray-400 cursor-pointer hover:shadow-2xl
