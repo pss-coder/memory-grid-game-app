@@ -1,6 +1,6 @@
 import click from './assets/click.wav'
 import game_complete from './assets/game_complete.mp3'
-import level_up from './assets/level_up.ogg'
+import level_up from './assets/level_up.mp3'
 import try_again from './assets/try_again.wav'
 
 export const playSound = (type) => { 
