@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "SquareHunt",
+  "name": "Can you hunt the green squares quickly?",
   "icons": [
     {
       "src": "favicon.ico",
