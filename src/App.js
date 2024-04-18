@@ -55,9 +55,9 @@ function App() {
   
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center">
       
-      <div className='round-lg shadow container mx-auto mt-16 bg-teal-50 py-4'>
+      <div className='round-lg shadow container mx-auto sm:px-6 lg:px-8 bg-teal-50'>
         
         {/* Header */}
         <div className='text-center mt-4'>
@@ -81,15 +81,15 @@ function App() {
             <p className='text-md text-gray-600'>Timer:
               <span id="hours" className="ml-1">00</span>
               <span id="separator" className={`${state.startGame && 'animate-blink'}`}>:</span>
-              <span id="minutes" className="font-bold">0{state.timer}</span>
+              <span id="minutes" className="font-bold">0{!state.timer ? 0 : state.timer}</span>
             </p>
           </div>
         </div>
         
 
-        <div className='mt-4 flex gap-12 flex-col sm:flex-row items-center justify-center'>
+        <div className='mt-4 flex gap-8 flex-col md:flex-row items-center justify-center'>
                 {/* Gameboard */}
-          <div className="flex flex-col justify-between items-center relative">
+          <div className="flex flex-col justify-between items-center relative m-2">
             <GameBoard
               level={state.level}
               gridSize={state.selectedLevel.grid}
@@ -127,7 +127,7 @@ function App() {
               </button>
             )}
 
-            <div className="rounded-lg bg-yellow-200 p-2 shadow">
+            <div className="rounded-lg bg-yellow-200 p-2 shadow m-4">
                 {/* Panel Header */}
                 <div className="flex flex-row gap-2 mb-2 mt-2 justify-center">
                   <h3 className="font-bold">Game History</h3>

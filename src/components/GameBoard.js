@@ -37,6 +37,7 @@ const GameBoard = ({ level, gridSize, clickedSquares ,greenSquares, disableClick
             handleClick={handleSquareClick}
             isClicked={clickedSquares.includes(i)} // Pass down whether the square is clicked
             showAnswer = {showAnswer}
+            gridSize = {gridSize}
           />
         );
       }
