@@ -55,7 +55,7 @@ function App() {
   
 
   return (
-    <div className="flex justify-center items-center">
+    <div data-testid="app" className="flex justify-center items-center">
       
       <div className='round-lg shadow container mx-auto sm:px-6 lg:px-8 bg-teal-50'>
         

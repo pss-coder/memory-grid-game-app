@@ -72,7 +72,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 -------
 
-2. Improve UI <- test for all grid size, and mobile size
 3. Unit test cases
 5. Update readme.md
 4. Demo Video <-
